@@ -1,51 +1,64 @@
 // **************************************************************
 // * Modelo Usuario
-// **************************************************************
+// *************************************************************
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../database/config-mssql");
+const   Estatu    = require('./estatu');
+ const Departamento = require("./departamento");
 
-const { Schema, model } = require('mongoose');
-
-const UsuarioSchema = Schema({
-      nombre: {
-        type: String,
-        required: [true, 'El nombre es obligatorio']
-    },
-    correo: {
-        type: String,
-        required: [true, 'El correo es obligatorio'],
-        unique: true
-    },
-
-    contraseña: {
-        type: String,
-        required: [true, 'La contraseña es obogatoria']
-    },
-    img: {
-        type: String,
-    },
-    rol: {
-        type: String,
-        required: true,
-        default:'USER_ROLE'
-    },
-    estado: {
-        type: Boolean,
-        default: true
-    },
-    google: {
-        type: Boolean,
-        default: false
-    },
+ const Usuario = sequelize.define("Usuario", {
+  idusuario: {
+    type: DataTypes.TINYINT,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  idusuarioultimo: {
+    type: DataTypes.TINYINT,
+  },
+   cedula: {
+    type: DataTypes.STRING(10),
+    allowNull: false,
+  },
+   nombre: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+  },
+   apellido: {
+    type: DataTypes.STRING(20),
+    allowNull: false,
+  },
+   usuario: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+  },
+   clave: {
+    type: DataTypes.STRING(44),
+    allowNull: false,
+  },
+  correo: {
+    type: DataTypes.STRING(50),
+    unique: true,
+    allowNull: false,
+  },
+  idestatus: {
+    type: DataTypes.SMALLINT,
+    allowNull: false,
+  },
+  nivel: {
+    type: DataTypes.TINYINT,
+    allowNull: false,
+  },
+  iddepartamento: {
+    type: DataTypes.TINYINT,
+    allowNull: false,
+  },
 });
-//************************************************************************ */
-// Se sobre escribe el metodo para personalizar
-// validaciones(excluir elementos del objeto toJSON devuelto)
-//*********************************************************************** */
-UsuarioSchema.methods.toJSON = function(){
-    const {__v, contraseña,_id,...usuario} = this.toObject();
-   usuario.uid=_id;
-    return  usuario;
-}
-//*********************************************************************** */
-// Exportaciones
-//*********************************************************************** */
-module.exports = model('Usuario',UsuarioSchema);
+
+// ForeignKey Uauarios - Estatus
+Usuario.belongsTo(Estatu, { foreignKey: "idestatus" });
+Estatu.hasMany(Usuario, { foreignKey: "idestatus" });
+
+// ForeignKey Usuarios - Estatus
+Usuario.belongsTo(Departamento, { foreignKey: "iddepartamento" });
+Departamento.hasMany(Usuario, { foreignKey: "iddepartamento" });
+module.exports = Usuario;

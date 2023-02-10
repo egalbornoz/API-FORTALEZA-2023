@@ -11,7 +11,7 @@ const router = Router();
 /********************************************************************************
  * Rutas obtener usuarios - endPoint
  ********************************************************************************/
-router.get('/', usuariosGet);
+router.get('/',validarJWT,usuariosGet);
 
 /********************************************************************************
  * Ruta para actualizar  usuario por Id - endPoint

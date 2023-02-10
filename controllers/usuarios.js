@@ -3,25 +3,40 @@
  ********************************************************************************/
 const { response, request, json } = require('express');
 const bcrypt = require('bcryptjs');
-const Usuario = require('../models/usuario');
+const { Usuario, Estatu, Departamento } = require('../models/');
+
+
 /********************************************************************************
  * Controlador para obtener los usuarios activos con estado:true y paginados limite=?
  ********************************************************************************/
 const usuariosGet = async (req = request, res = response) => {
-    const filtro = { estado: true };
-    const { limite = 5, desde = 0 } = req.query;  //Obtener del body el limite de paginación
-    const [total, usuarios] = await Promise.all([
 
-        Usuario.countDocuments(filtro),
-        Usuario.find(filtro) //dentro den find va la condicion
-            .skip(Number(desde))
-            .limit(Number(limite))
-    ]);
-    res.json({
-        total,
-        usuarios
-    });
+    try {
+        const usuarios = await Usuario.findAll({
+            where:{
+              idusuario:1
+            },
+             attributes: ['nombre','apellido','cedula','usuario','correo'],
+             include: [
+                    {
+                      model: Estatu,
+                      attributes: ['nombre'],
+                    },
+                    {
+                      model: Departamento,
+                        attributes: ['nombre','activo'],
+                      },
+                ],
+                
+        });
+           res.json({ usuarios });
+
+    } catch (error) {
+      res.status(500);
+      res.send(error.message);
+    };
 }
+
 /********************************************************************************
  * Controlador para actualizar los usuarios 
  ********************************************************************************/
