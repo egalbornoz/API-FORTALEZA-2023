@@ -3,9 +3,10 @@
  ********************************************************************************/
 const { response, json } = require('express');
 const bcrypjs = require('bcryptjs');
-const Usuario = require('../models/usuario');
+const { Usuario, Estatu }= require('../models/');
 const { generarJWT } = require('../helpers/generar-jwt');
 const { googleVerify } = require('../helpers/google-verify');
+const { options } = require('../routes/usuarios');
 
 /********************************************************************************
  * Controlador login
@@ -13,35 +14,61 @@ const { googleVerify } = require('../helpers/google-verify');
 const login = async (req, res = response) => {
 
     const { correo, contraseña } = req.body;
-
+   
     try {
-        const usuario = await Usuario.findOne({ correo });
-        if (!usuario) {
+        const usuarioAut = await Usuario.findOne({
+            where:{
+              correo
+            },
+             attributes: ['idusuario','usuario','correo','claveweb'],
+             include: [
+                {
+                  model: Estatu,
+                  attributes: ['nombre'],
+                },
+            ],
+        });
+        if (!usuarioAut) {
             return res.status(400).json({
                 msg: 'Usuario y/o contraseña no son válidos - email'
             })
         }
-        if (usuario.estado === false) {
+         if (usuarioAut.Estatu.nombre != 'Activo'
+              && usuario.Estatu.nombre != 'ACTIVO') {
             return res.status(400).json({
-                msg: 'Usuario y/o contraseña no son válidos - estado '
+                msg: 'Usuario Inactivo'
             })
         }
-        const validarPass = bcrypjs.compareSync(contraseña, usuario.contraseña);
-
+        if(!usuarioAut.claveweb){
+            return res.status(400).json({
+                msg: 'Usuario no posee clave para acceso WEB/MOVIL'
+            });
+        }
+        const validarPass = bcrypjs.compareSync(contraseña, usuarioAut.claveweb);
+        
         if (!validarPass) {
             return res.status(400).json({
                 msg: 'Usuario y/o contraseña no son válidos  - valipass'
-            })
+            });
         }
-        const token = await generarJWT(usuario.id);
+//Se crea la data excluyendo la clave
+        const data= {
+            usuario:usuarioAut.usuario,
+            correo,
+        };
+        console.log(data);
 
-        res.json({
-            usuario,
-            token
-        });
+
+
+        const token = await generarJWT(usuarioAut.idusuario);
+          res.json({
+            data,
+             token
+    });
 
     } catch (error) {
         return res.status(500).json({
+            errr:error,
             msg: 'Algo salio mal, comunicar al administrador'
         })
     }

@@ -13,9 +13,9 @@ const usuariosGet = async (req = request, res = response) => {
 
     try {
         const usuarios = await Usuario.findAll({
-            where:{
-              idusuario:1
-            },
+            // where:{
+            //   idusuario:1
+            // },
              attributes: ['nombre','apellido','cedula','usuario','correo'],
              include: [
                     {

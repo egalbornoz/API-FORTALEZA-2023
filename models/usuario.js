@@ -35,6 +35,10 @@ const   Estatu    = require('./estatu');
     type: DataTypes.STRING(44),
     allowNull: false,
   },
+   claveweb: {
+    type: DataTypes.STRING(200),
+    allowNull: false,
+  },
   correo: {
     type: DataTypes.STRING(50),
     unique: true,
