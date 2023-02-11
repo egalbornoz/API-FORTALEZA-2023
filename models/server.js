@@ -26,6 +26,7 @@ class Server {
             usuarios: '/api/usuarios',
             pacientes: '/api/pacientes',
             citamedicas: '/api/citamedicas',
+            clientes:'/api/clientes',
         }
         // Conectar a la Base de Datos
         this.conectionDB();
@@ -68,6 +69,7 @@ class Server {
         this.app.use(this.path.citamedicas, require('../routes/citamedica'));
         this.app.use(this.path.pacientes, require('../routes/pacientes'));
         this.app.use(this.path.productos, require('../routes/productos'));
+        this.app.use(this.path.clientes,require('../routes/clientes'));
     }
 
     sockets() {

@@ -11,6 +11,8 @@ const ChatMensajes = require('./chat-mensajes');
 const Paciente =require('./paciente');
 const CitaMedica =require('./citamedica');
 const Estatu =require('./estatu');
+const Cliente = require('./cliente');
+const TipoIdentificacione =  require('./tipoidentificacione')
 
 
 // *************************************************************
@@ -26,5 +28,7 @@ module.exports = {
     Paciente,
     CitaMedica,
     Estatu,
-    Departamento
+    Departamento,
+    Cliente,
+    TipoIdentificacione
 }

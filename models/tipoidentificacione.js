@@ -4,6 +4,7 @@ const { DataTypes } =  require('sequelize');
 
 const TipoIdentificacone = sequelize.define('TipoIdentificacione',{
    idtipoidentificacion:{
+      primaryKey:true,
     type:DataTypes.TINYINT
    },
    codigo:{
