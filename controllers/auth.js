@@ -6,7 +6,7 @@ const bcrypjs = require('bcryptjs');
 const { Usuario, Estatu }= require('../models/');
 const { generarJWT } = require('../helpers/generar-jwt');
 const { googleVerify } = require('../helpers/google-verify');
-const { options } = require('../routes/usuarios');
+const { sequelize } = require('../database/config-mssql');
 
 /********************************************************************************
  * Controlador login
@@ -28,13 +28,13 @@ const login = async (req, res = response) => {
                 },
             ],
         });
-        if (!usuarioAut) {
+    if (!usuarioAut) {
             return res.status(400).json({
                 msg: 'Usuario y/o contraseña no son válidos - email'
             })
         }
          if (usuarioAut.Estatu.nombre != 'Activo'
-              && usuario.Estatu.nombre != 'ACTIVO') {
+            && usuarioAut.Estatu.nombre != 'ACTIVO') {
             return res.status(400).json({
                 msg: 'Usuario Inactivo'
             })
@@ -56,11 +56,8 @@ const login = async (req, res = response) => {
             usuario:usuarioAut.usuario,
             correo,
         };
-        console.log(data);
-
-
-
         const token = await generarJWT(usuarioAut.idusuario);
+        
           res.json({
             data,
              token

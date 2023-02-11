@@ -1,7 +1,7 @@
 // **************************************************************
 // * Modelo Usuario
 // *************************************************************
-const { DataTypes } = require("sequelize");
+const { DataTypes } = require('sequelize');
 const { sequelize } = require("../database/config-mssql");
 const   Estatu    = require('./estatu');
  const Departamento = require("./departamento");
